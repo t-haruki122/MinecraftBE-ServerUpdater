@@ -47,12 +47,6 @@ def get_latest_url():
     out = select_version(urls)
     return out
 
-def download_latest_version():
-    url = "https://api.github.com/repos/username/repo/releases/latest"
-    response = requests.get(url)
-    latest_version = response.json()["tag_name"]
-    return latest_version
-
 def serch_url(text, st, fn):
     out, ans = [], ''
 
