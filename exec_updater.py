@@ -4,6 +4,7 @@ import requests
 import random
 import shutil
 import os
+import datetime
 
 # ---------------------------------------------------------------
 
@@ -29,8 +30,11 @@ is_replace = True
 
 # ---------------------------------------------------------------
 
+def get_time():
+    return datetime.datetime.now().strftime('%Y%m%d%H%M')
+
 dl_filename = 'server_temp.zip'
-old_server_path = 'old_server'
+old_server_path = f'old_server_{get_time()}'
 backup_path = 'upd_backup'
 dl_path = backup_path + '/' + dl_filename
 
@@ -97,8 +101,16 @@ def copy_new_file():
     shutil.copy(f'{backup_path}/allowlist.json', f'{now_server_path}/allowlist.json')
     shutil.copy(f'{backup_path}/server.properties', f'{now_server_path}/server.properties')
 
+def is_now_server_exist(now_server_path):
+    return os.path.exists(now_server_path)
 
-if __name__ == '__main__':
+test = True
+if __name__ == '__main__' and test:
+    if not is_now_server_exist(now_server_path):
+        print("Server not found! Please put the server in the same directory as this file.")
+        exit()
+
+    # make backup directory
     os.mkdir(backup_path)
 
     url = get_latest_url()
