@@ -1,4 +1,4 @@
-# Get the new version of Minecraft Server Bedrock Edition
+# Get the new version of Minecraft Server Bedrock Edition and update it.
 
 import requests
 import random
@@ -90,35 +90,86 @@ def rename_old_file():
 def backup_file():
     # backup worlds & allowlist.json & server.properties
     global old_server_path, backup_path
-    shutil.copytree(f'{old_server_path}/worlds', f'{backup_path}/worlds')
+    try:
+        shutil.copytree(f'{old_server_path}/worlds', f'{backup_path}/worlds')
+    except:
+        print("Cannot copy Worlds data! (Maybe it's empty)")
     shutil.copy(f'{old_server_path}/allowlist.json', f'{backup_path}/allowlist.json')
     shutil.copy(f'{old_server_path}/server.properties', f'{backup_path}/server.properties')
 
 def copy_new_file():
-    # copy new file
     global backup_path, now_server_path
-    shutil.copytree(f'{backup_path}/worlds', f'{now_server_path}/worlds')
+    try:
+        shutil.copytree(f'{backup_path}/worlds', f'{now_server_path}/worlds')
+    except:
+        print("Cannot copy Worlds data! (Maybe it's empty)")
     shutil.copy(f'{backup_path}/allowlist.json', f'{now_server_path}/allowlist.json')
     shutil.copy(f'{backup_path}/server.properties', f'{now_server_path}/server.properties')
 
 def is_now_server_exist(now_server_path):
     return os.path.exists(now_server_path)
 
+def check_now_version():
+    # get version of now server
+    global now_server_path
+
+    files_list = os.listdir(f"{now_server_path}/behavior_packs")
+    maxi = [0, 0, 0]
+    for i in files_list:
+        if i[:8] == "vanilla_":
+            ver = i[8:].split(".")
+            for j in range(len(ver)):
+                if int(ver[j]) < maxi[j]:
+                    break
+                if int(ver[j]) > maxi[j]:
+                    for k in range(len(ver)):
+                        maxi[k] = int(ver[k])
+                    break
+
+    out = ".".join([str(i) for i in maxi])
+    return out
+
+def is_update_available(url):
+    global now_server_path
+    now_version = check_now_version()
+    latest_version = ".".join(url.split("/")[-1][15:].replace(".zip", "").split(".")[0:3])
+    print("*\nnow_version: ", now_version)
+    print("latest_version: ", latest_version)
+    return now_version != latest_version
+
 test = True
 if __name__ == '__main__' and test:
-    if not is_now_server_exist(now_server_path):
-        print("Server not found! Please put the server in the same directory as this file.")
-        exit()
-
-    # make backup directory
-    os.mkdir(backup_path)
+    if is_replace:
+        if not is_now_server_exist(now_server_path):
+            print("Server not found! Please put the server in the same directory as this file.")
+            print("If you want a new server, please change 'is_place' to 'False'.")
+            exit()
+        else:
+            print("Server directory found!")
 
     url = get_latest_url()
     print("URL detected!\n" + url)
 
-    print("Downloading...")
-    download_file(url)
+    if is_replace:
+        if not is_update_available(url):
+            print("Looks like you're already using the latest version! \nThere's no need to update!")
+            exit()
+        else:
+            print("Update is available!")
+
+    print("*\nDownloading...")
+    try:
+        download_file(url)
+    except:
+        print("Download failed! Please try again later.")
+        exit()
     print("Downloaded!")
+
+    if not os.path.exists(backup_path):
+        os.mkdir(backup_path)
+        print("backup (temporary) directory created!")
+    else:
+        print("backup (temporary) directory found!")
 
     if is_replace:
         rename_old_file()
@@ -138,4 +189,4 @@ if __name__ == '__main__' and test:
         shutil.rmtree(backup_path)
         print("Removed temporary file!")
 
-    print("Update Complete!")
+    print("Process Completed!")
