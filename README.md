@@ -1,4 +1,4 @@
-# MCBE Dedicated Server Updater for Win & Linux
+# Minecraft Bedrock Edition Dedicated Server Updater for Win & Linux
 
 ## Description
 This is python based script that can download (&replace) Dedicated Server of Minecraft Bedrock Edition.  
@@ -41,9 +41,6 @@ Windows:
 double click or command terminal: `python exec_updater.py`  
 Linux:  
 `./update_run.sh` or `python3 exec_update.py`
-
-## TODO
-version check function
 
 ## Author
 t-haruki122
