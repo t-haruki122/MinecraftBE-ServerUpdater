@@ -1,8 +1,8 @@
 # Minecraft Bedrock Edition Dedicated Server Updater for Win & Linux
 
 ## Description
-This is python based script that can download (&replace) Dedicated Server of Minecraft Bedrock Edition.  
-This script has four option of versions and two of downloading.  
+This python script can download (&replace) Dedicated Server of Minecraft Bedrock Edition.  
+It has four options of versions and two of downloading.  
 
 ### version options:
 0. Windows Release
@@ -41,6 +41,8 @@ Windows:
 double click or command terminal: `python exec_updater.py`  
 Linux:  
 `./update_run.sh` or `python3 exec_update.py`
+
+Perhaps, you can use `run.sh` if you use systemd on Linux system. Please change Line 3.
 
 ## Author
 t-haruki122
