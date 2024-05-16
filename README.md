@@ -2,7 +2,7 @@
 
 ## Description
 This python script can download (&replace) Dedicated Server of Minecraft Bedrock Edition.  
-It has four options of versions and two of downloading.  
+It has 4 options of version and 2 ones of downloading.  
 
 ### version options:
 0. Windows Release
@@ -13,17 +13,16 @@ It has four options of versions and two of downloading.
 1. Downloading & Replacing : Download & Replace old server
 2. Normal Downloading : Just download & UnZip server files  
 
-When choosing replacing mode, this script replace just 3 files.
+On replacing mode, this script replace only 3 files.
 
 1. worlds
 2. allowlist.json
 3. server.properties
 
-If you use behavior packs or resource packs, you have to copy it manually.  
+Behavior packs and resource packs needs to be  copied manually.  
 
-And, you also have to change the name of the server folder which you are using now to `now_server`.  
-This operation is needed to let the script detect the folder.  
-If you would not like to change the server folder name, please change variable `now_server_path` in `exec_updater.py`.
+And, pleade change server folder name to `now_server`.  
+If you’d not like to change it, please change variable `now_server_path` in `exec_updater.py`.
 
 ## Requirement
 - Python3
@@ -42,7 +41,7 @@ double click or command terminal: `python exec_updater.py`
 Linux:  
 `./update_run.sh` or `python3 exec_update.py`
 
-Perhaps, you can use `run.sh` if you use systemd on Linux system. Please change Line 3.
+Perhaps, you can utilize `run.sh` if you use systemd on Linux system. Then, please change Line 3.
 
 ## Author
 t-haruki122
