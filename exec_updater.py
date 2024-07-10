@@ -8,7 +8,7 @@ import datetime
 
 # ---------------------------------------------------------------
 
-#Select the version of the server to download (ver)
+# Select the version of the server to download (ver)
 
 # [Release]
 # 0 : Windows Release
@@ -169,7 +169,8 @@ if __name__ == '__main__' and test:
     if is_replace:
         if not is_now_server_exist(now_server_path):
             print("Server not found! Please put the server in the same directory as this file.")
-            print("If you want a new server, please change 'is_place' to 'False'.")
+            print("If you want a new server, change variable 'is_place' to 'False'.")
+            print("If you want to replace without any name changes, modify variable 'now_server_path' to appropriate value")
             exit()
         else:
             print("Server directory found!")
