@@ -55,7 +55,7 @@ def get_latest_url():
         raise RuntimeError("Failed to get the latest version! Please try again later.")
     print("response: ", response)
     content = str(response.text.encode('utf-8'))
-    urls = serch_url(content, '<a href="https://minecraft.azureedge.net/', '.zip"')
+    urls = serch_url(content, '<a href="https://www.minecraft.net/bedrockdedicatedserver/', '.zip"')
     out = select_version(urls)
     return out
 
@@ -135,21 +135,25 @@ def is_now_server_exist(now_server_path):
 
 
 def check_now_version():
-    # get version of now server
+    # function to get version of now server
     global now_server_path
 
     files_list = os.listdir(f"{now_server_path}/behavior_packs")
     maxi = [0, 0, 0]
+
+    # serch maximum version in behavior packs
     for i in files_list:
-        if i[:8] == "vanilla_":
-            ver = i[8:].split(".")
-            for j in enumerate(ver):
-                if int(ver[j]) < maxi[j]:
-                    break
-                if int(ver[j]) > maxi[j]:
-                    for k in range(len(ver)):
-                        maxi[k] = int(ver[k])
-                    break
+        if i[:8] != "vanilla_":
+            continue
+        version = i[8:].split(".")
+        for serch_index, version_part in enumerate(version):
+            if int(version_part) < maxi[serch_index]:
+                break
+            if int(version_part) > maxi[serch_index]:
+                # バージョンコピー
+                for k in range(len(version)):
+                    maxi[k] = int(version[k])
+                break
 
     out = ".".join([str(i) for i in maxi])
     return out
