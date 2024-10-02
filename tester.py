@@ -1,9 +1,11 @@
 from Obj.WebManager import WebManager
 
+
 def pprint(lis):
     for i in lis:
         print(i)
     return
+
 
 def main():
     web = WebManager()
@@ -14,6 +16,7 @@ def main():
     for i in urls:
         print(i.getVersion())
     pass
+
 
 if __name__ == "__main__":
     main()
