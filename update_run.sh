@@ -1,1 +1,0 @@
-python3 exec_updater.py
