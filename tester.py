@@ -1,5 +1,5 @@
 from Obj.WebManager import WebManager
-
+from Obj.File import Directory
 
 def pprint(lis):
     for i in lis:
@@ -17,6 +17,14 @@ def main():
         print(i.getVersion())
     pass
 
+def main2():
+    d = Directory("Obj")
+    print(d)
+    print(d.getPath())
+    print(d.getPathList())
+    print(d.getFileList())
+    pass
+
 
 if __name__ == "__main__":
-    main()
+    main2()

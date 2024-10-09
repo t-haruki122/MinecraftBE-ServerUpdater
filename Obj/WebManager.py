@@ -1,7 +1,7 @@
 import re
 
 from Obj.Downloader import Downloader, ServerDownloader
-from Obj.Writer import Writer
+from Obj.File import Writer
 
 
 class WebManager():
