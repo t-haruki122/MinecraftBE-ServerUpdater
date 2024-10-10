@@ -34,21 +34,24 @@ class Directory():
             raise ValueError("Invalid path: it's empty")
         self.path = path
         self.pathList = path.split("/")
-        self.getFileList()
+        self.reloadFileList()
         return
 
 
     def reloadFileList(self) -> None:
-
-
-    def getFileList(self) -> list[File]:
-        # ディレクトリ内のファイルリストを返す
+        # ディレクトリ内のファイルリストを再取得する
         if self.isPathExist():
             self.dirPathList = [f"{self.path}/{i}" for i in os.listdir(self.path)]
             self.dirList = [File(i) for i in os.listdir(self.path)]
         else:
             self.dirList = []
             self.dirPathList = []
+        return
+
+
+    def getFileList(self) -> list[File]:
+        # ディレクトリ内のファイルリストを返す
+        self.reloadFileList()
         return self.dirList
 
 

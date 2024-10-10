@@ -13,7 +13,7 @@ class File():
         return self.pathList[-1]
 
 
-    def getPath(self) -> str:   
+    def getPath(self) -> str:
         # ファイルパスを文字列で返す
         return self.path
 
