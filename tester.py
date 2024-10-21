@@ -13,8 +13,8 @@ def main():
     print(web.getDownloadOsVersion())
     urls = web.getLatestUrl()
     pprint(urls)
-    for i in urls:
-        print(i.getVersion())
+    for url in urls:
+        print(url.getVersion())
     pass
 
 def main2():

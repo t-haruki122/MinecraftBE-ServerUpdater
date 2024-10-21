@@ -15,7 +15,7 @@ class Directory():
 
     def __str__(self) -> str:
         # ディレクトリ名を文字列で返す
-        return self.pathList[-1]
+        return self.getPathList()[-1]
 
 
     def getPath(self) -> str:
@@ -43,6 +43,7 @@ class Directory():
         if self.isPathExist():
             self.dirPathList = [f"{self.path}/{i}" for i in os.listdir(self.path)]
             self.dirList = [File(i) for i in os.listdir(self.path)]
+            # FileじゃなくてDirectoryの可能性がある
         else:
             self.dirList = []
             self.dirPathList = []
@@ -93,3 +94,23 @@ class Directory():
         else:
             print(f"Directory doesn't exist: {self.path}")
         return False
+
+
+
+class MinecraftServerDirectory(Directory):
+    def __init__(self, path) -> None:
+        # 初期化をする
+        super().__init__(path)
+        return
+
+
+    def getVersion(self):
+        # behavior_packsの中に存在している
+        # vanilla_[version] を確認し，
+        # 最新のバージョンを返す
+        version = [0, 0, 0]
+        self.reloadFileList()
+        for i in self.getFileList():
+            if "vanilla_" in i.getPath():
+                version = [int(j) for j in i.getPath().split("_")[-1].split(".")]
+                # これじゃ動かない 変える

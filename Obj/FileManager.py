@@ -5,7 +5,7 @@ from Obj.File import Writer
 class FileManager():
     def __init__():
         pass
-    
+
     def backUpGameData():
         pass
 
@@ -13,4 +13,5 @@ class FileManager():
         pass
 
     def getLatestVersion():
+        
         pass
