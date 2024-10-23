@@ -1,6 +1,6 @@
 import re
 import os
-from Obj.File import Writer
+from Obj.Directory import MinecraftServerDirectory
 
 class FileManager():
     def __init__():

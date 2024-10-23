@@ -1,7 +1,8 @@
 import re
 
 from Obj.Downloader import Downloader, ServerDownloader
-from Obj.File import Writer
+from Obj.File import Writer, Zip # ファイル書き込み，解凍のため
+from Obj.Directory import Directory # バックアップディレクトリを作成するため
 
 
 class WebManager():
@@ -23,7 +24,8 @@ class WebManager():
 
         # 一時ファイルの設定
         self.downloadFileName = "server_temp.zip"
-        self.temporaryDownloadPath = "./temp/" + self.downloadFileName
+        self.temporaryDownloadDirectory = "./" + "temp"
+        self.temporaryDownloadPath = self.temporaryDownloadDirectory + "/" + self.downloadFileName
 
         return
 
@@ -65,7 +67,7 @@ class WebManager():
 
 
     def downloadServer(self):
-        # サーバーをダウンロード
+        # サーバーをダウンロードして解凍
         # 引数: なし
         # 返り値: なし
 
@@ -77,8 +79,13 @@ class WebManager():
         else:
             raise ValueError("No such version")
 
-        w = Writer(self.temporaryDownloadPath)
-        w.write(content)
+        d = Directory(self.temporaryDownloadDirectory)
+        d.makeDir()
 
+        w = Writer(self.temporaryDownloadPath)
+        w.writeBinary(content)
+
+        z = Zip(self.temporaryDownloadPath)
+        z.unzip(self.temporaryDownloadDirectory)
         return
 

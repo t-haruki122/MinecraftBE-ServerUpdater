@@ -8,7 +8,6 @@ class Directory():
     def __init__(self, path) -> None:
         # 初期化をする
         self.setPath(path)
-        self.dirList = []
         self.dirPathList = []
         return
 
@@ -42,18 +41,9 @@ class Directory():
         # ディレクトリ内のファイルリストを再取得する
         if self.isPathExist():
             self.dirPathList = [f"{self.path}/{i}" for i in os.listdir(self.path)]
-            self.dirList = [File(i) for i in os.listdir(self.path)]
-            # FileじゃなくてDirectoryの可能性がある
         else:
-            self.dirList = []
             self.dirPathList = []
         return
-
-
-    def getFileList(self) -> list[File]:
-        # ディレクトリ内のファイルリストを返す
-        self.reloadFileList()
-        return self.dirList
 
 
     def isPathExist(self) -> bool:
