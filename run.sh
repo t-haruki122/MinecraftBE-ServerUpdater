@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # cd this directory 
-python3 exec_updater.py
-cd now_server
-chmod 700 bedrock_server
+cd /path/to/your/dir/now_server
+chmod +x bedrock_server
 ./bedrock_server
