@@ -32,12 +32,14 @@ is_replace = True
 def get_time():
     return datetime.datetime.now().strftime('%Y%m%d%H%M')
 
+# Variables
 dl_filename = 'server_temp.zip'
 old_server_path = f'old_server_{get_time()}'
 backup_path = 'upd_backup'
 dl_path = backup_path + '/' + dl_filename
 times = 5
 
+# User-Agent
 RandNum = random.randint(1000, 9999)
 ua = f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.33 (KHTML, like Gecko) Chrome/90.0.{RandNum}.212 Safari/537.33"
 headers = {'User-Agent': ua}
@@ -110,14 +112,28 @@ def rename_old_file():
 
 
 def backup_file():
-    # backup worlds & allowlist.json & server.properties
+    # backup some files
+    # Folders: worlds
+    # Files: allowlist.json, server.properties, permissions.json
     global old_server_path, backup_path
-    try:
-        shutil.copytree(f'{old_server_path}/worlds', f'{backup_path}/worlds')
-    except FileNotFoundError as e:
-        print("Cannot copy Worlds data! (Maybe it's empty) :", e)
-    shutil.copy(f'{old_server_path}/allowlist.json', f'{backup_path}/allowlist.json')
-    shutil.copy(f'{old_server_path}/server.properties', f'{backup_path}/server.properties')
+
+    folders = ['worlds']
+    for folder in folders:
+        try:
+            shutil.copytree(f'{old_server_path}/{folder}', f'{backup_path}/{folder}')
+            print(f"Folder copied: {folder}")
+        except FileNotFoundError as e:
+            print(f"Cannot copy: {folder} (Maybe it's empty) :", e)
+    
+    files = ['allowlist.json', 'server.properties', 'permissions.json']
+    for file in files:
+        try:
+            shutil.copy(f'{old_server_path}/{file}', f'{backup_path}/{file}')
+            print(f"File copied: {file}")
+        except FileNotFoundError as e:
+            print(f"Cannot copy: {file} :", e)
+    
+    print("Backup Completed!")
 
 
 def copy_new_file():
@@ -141,7 +157,7 @@ def check_now_version():
     files_list = os.listdir(f"{now_server_path}/behavior_packs")
     maxi = [0, 0, 0]
 
-    # serch maximum version in behavior packs
+    # behavior_packs内の最大バージョンを検索
     for i in files_list:
         if i[:8] != "vanilla_":
             continue
@@ -154,6 +170,7 @@ def check_now_version():
                 for k in range(len(version)):
                     maxi[k] = int(version[k])
                 break
+            continue # 同じだった場合は次の桁へ
 
     out = ".".join([str(i) for i in maxi])
     return out
