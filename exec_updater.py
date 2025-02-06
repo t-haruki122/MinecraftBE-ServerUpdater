@@ -5,6 +5,7 @@ import random
 import shutil
 import os
 import datetime
+import sys
 
 # ---------------------------------------------------------------
 
@@ -27,6 +28,16 @@ now_server_path = 'now_server'
 is_replace = True
 
 # ---------------------------------------------------------------
+
+# Get mode from argument
+# 0 : Check whether the latest version is available
+#     returns 0 if the latest version is already installed, 1 if not installed and -1 if an error occurs
+# 1 : Update the server to the latest version (default)
+mode = 1
+if len(sys.argv) > 1:
+    mode = int(sys.argv[1])
+else:
+    print("No version argument provided. Using default version 1.")
 
 
 def get_time():
@@ -185,8 +196,15 @@ def is_update_available(url):
     return now_version != latest_version
 
 
-test = True
-if __name__ == '__main__' and test:
+if __name__ == '__main__' and mode == 0:
+    if not is_now_server_exist(now_server_path):
+        print("-1")
+        exit()
+    url = get_latest_url()
+    print("1" if is_update_available(url) else "0")
+
+
+if __name__ == '__main__' and mode == 1:
     if is_replace:
         if not is_now_server_exist(now_server_path):
             print("Server not found! Please put the server in the same directory as this file.")
