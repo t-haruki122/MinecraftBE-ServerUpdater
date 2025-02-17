@@ -26,6 +26,7 @@ if [ "$UPD" -eq 1 ]; then
     # update server
     echo "[BDS_UPD_SHELL] update server"
     /usr/bin/python3 exec_updater.py
+    /usr/bin/chmod +rw $SERVER_DIR_NAME
     /usr/bin/chmod +x $SERVER_DIR_NAME/bedrock_server
 
     # start service
