@@ -50,7 +50,7 @@ BDSroot
 Change the server folder name to `now_server`
 ### 4. Execute the script
 Linux:  
-`python3 exec_update.py`
+`python3 exec_updater.py`
 
 You may be able to use `run.sh` and `update_run.sh` if you use systemd and crontab.  
 
