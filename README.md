@@ -1,9 +1,10 @@
-# Minecraft BDS (Bedrock Dedicated Server) Updater for Win & Linux
+# Minecraft BDS (Bedrock Dedicated Server) Updater
 
 ## Description
-This python script can download (&replace) Dedicated Server of Minecraft Bedrock Edition.  
-It has 4 options of version and 2 ones of downloading.  
+This python script can download (&replace) BDS.  
 **DO NOT use this for DoS purposes.**  
+
+It has some options like below.  
 
 ### version options:
 0. Windows Release
@@ -20,7 +21,7 @@ On replacing mode, this script replace only 3 files.
 2. allowlist.json
 3. server.properties
 
-You have to copy *resource packs* manually.  
+You have to copy **resource packs** manually.  
 
 Please change server folder name to `now_server`.  
 If you’d not like to change it, please change variable `now_server_path` in `exec_updater.py`.
@@ -39,6 +40,7 @@ BDSroot
     ├─ now_server (This is server body)
     │  ├─ worlds
     │  ├─ bedrock_server
+    │  ├─ server.properties
     │  └─ etc...
     ├─ exec_updater.py
     ├─ run.sh
@@ -52,5 +54,3 @@ Linux:
 
 You may be able to use `run.sh` and `update_run.sh` if you use systemd and crontab.  
 
-## Author
-t-haruki122
