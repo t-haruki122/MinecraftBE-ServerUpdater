@@ -8,9 +8,14 @@ SERVICE=serviceName.service
 # change to your server dir name
 SERVER_DIR_NAME=now_server
 
-# Check if SERVICE variable is set
-if [ -z "$SERVICE" ]; then
-    echo "Error: SERVICE variable is not set."
+# Override echo to include [BDS_UPD_SHELL] and timestamp
+echo() {
+    builtin echo "[BDS_UPD_SHELL] $(/bin/date '+%Y-%m-%d %H:%M:%S') // $*"
+}
+
+# Check if PATH variable is valid
+if [ ! -d "$PATH" ]; then
+    echo "Error: PATH variable is not a valid directory."
     exit 1
 fi
 
@@ -20,18 +25,18 @@ UPD=$(/usr/bin/python3 exec_updater.py 0 | /usr/bin/tail -n 1)
 
 if [ "$UPD" -eq 1 ]; then
     # stop service
-    echo "[BDS_UPD_SHELL] stop service: $SERVICE"
+    echo "stop service: $SERVICE"
     /usr/bin/systemctl stop $SERVICE
 
     # update server
-    echo "[BDS_UPD_SHELL] update server"
+    echo "update server"
     /usr/bin/python3 exec_updater.py
     /usr/bin/chmod +rw $SERVER_DIR_NAME
     /usr/bin/chmod +x $SERVER_DIR_NAME/bedrock_server
 
     # start service
-    echo "[BDS_UPD_SHELL] start service: $SERVICE"
+    echo "start service: $SERVICE"
     /usr/bin/systemctl start $SERVICE
 else
-    echo "[BDS_UPD_SHELL] no need to update"
+    echo "no need to update"
 fi
