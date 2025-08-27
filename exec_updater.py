@@ -1,11 +1,12 @@
 # Get the new version of Minecraft Server Bedrock Edition and update it.
 
 import requests
+
+import os
+import sys
 import random
 import shutil
-import os
 import datetime
-import sys
 
 # ---------------------------------------------------------------
 
