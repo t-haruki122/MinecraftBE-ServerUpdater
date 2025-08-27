@@ -3,6 +3,7 @@
 import requests
 
 import os
+import re
 import sys
 import random
 import shutil
