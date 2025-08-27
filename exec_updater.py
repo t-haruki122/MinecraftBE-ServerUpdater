@@ -7,26 +7,17 @@ import sys
 import random
 import shutil
 import datetime
+import platform
 
 # ---------------------------------------------------------------
 
-# Select the version of the server to download (ver)
-
-# [Release]
-# 0 : Windows Release
-# 1 : Linux Release
-
-# [Preview]
-# 2 : Windows Preview
-# 3 : Linux Preview
-
-ver = 1
-
-# path
+# path (todo: auto detect)
 now_server_path = 'now_server'
 
-# is replace old server
-is_replace = True
+# About is_replace
+# True: Replace the existing server
+# False: Place a new server
+is_replace = False
 
 # ---------------------------------------------------------------
 
@@ -188,6 +179,16 @@ def check_now_version():
     return out
 
 
+def get_os():
+    os_name = platform.system()
+    if os_name == "Windows":
+        return "bin-win"
+    elif os_name == "Linux":
+        return "bin-linux"
+    else:
+        raise RuntimeError("Unsupported OS! Only Windows and Linux are supported.")
+
+
 def is_update_available(url):
     global now_server_path
     now_version = check_now_version()
@@ -198,7 +199,7 @@ def is_update_available(url):
 
 
 if __name__ == '__main__' and mode == 0:
-    if not is_now_server_exist(now_server_path):
+    ver = get_os()
         print("-1")
         exit()
     url = get_latest_url()
