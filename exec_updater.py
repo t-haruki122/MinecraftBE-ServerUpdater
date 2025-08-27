@@ -1,6 +1,8 @@
 # Get the new version of Minecraft Server Bedrock Edition and update it.
 
 import requests
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 import os
 import re
@@ -58,19 +60,31 @@ headers = {'User-Agent': ua}
 def get_serverZip_url(ver) -> str:
     global max_retry, st, fn, dl_page_url, headers
     for try_count in range(max_retry):
-        response = requests.get(dl_page_url, headers=headers, timeout = 10)
-        if response.status_code == 200:
-            break
-        print(f"Failed to get the latest version! (retry {try_count+1}/{max_retry})")
-    else:
-        raise RuntimeError("Failed to get the latest version! Please try again later.")
-    print("response: ", response)
-    content = str(response.text.encode('utf-8'))
+        try:
+            options = Options()
+            options.add_argument('--headless')
+            options.add_argument('--disable-gpu')
+            options.add_argument(f'user-agent={ua}')  # uaは既存のUser-Agent文字列
+            driver = webdriver.Chrome(options=options)
+            driver.get(dl_page_url)
+            content = driver.page_source
+            driver.quit()
+        except Exception as e:
+            print(f"Failed to get page content! (retry {try_count+1}/{max_retry})", e)
+            continue
     dl_pattern = re.escape(st + ver + "/") + r'(.*?)' + re.escape(fn)
-    serverZip_url = re.findall(dl_pattern, content)
-    serverZip_url = [st + m + fn for m in serverZip_url]
-    print("Detected URLs: ", serverZip_url)
-    return serverZip_url
+    serverZip_urls = []
+    for m in re.findall(dl_pattern, content):
+        url = st + ver + "/" + m + fn
+        if url.startswith('<a href="'):
+            url = url[len('<a href="'):]
+        if url.endswith('"'):
+            url = url[:-1]
+        serverZip_urls.append(url)
+    print("Detected URLs: ", serverZip_urls)
+    if len(serverZip_urls) == 0:
+        raise RuntimeError("Failed to get the latest version! Please try again later.")
+    return serverZip_urls[0]
 
 
 def download_serverZip(url) -> None:
