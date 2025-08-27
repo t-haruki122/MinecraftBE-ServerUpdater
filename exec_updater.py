@@ -188,7 +188,10 @@ if __name__ == '__main__' and mode == 1:
         else:
             print("Server directory found!")
 
-    url = get_serverZip_url()
+    ver = get_os()
+    print(f"Platform: {ver}")
+
+    url = get_serverZip_url(ver)
     print("URL detected!\n" + url)
 
     if is_replace:
