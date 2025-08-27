@@ -40,7 +40,13 @@ dl_filename = 'server_temp.zip'
 old_server_path = f'old_server_{get_time()}'
 backup_path = 'upd_backup'
 dl_path = backup_path + '/' + dl_filename
-times = 5
+max_retry = 5
+
+# Consts
+st = '<a href="https://www.minecraft.net/bedrockdedicatedserver/'
+fn = '.zip"'
+dl_page_url = "https://www.minecraft.net/en-us/download/server/bedrock"
+
 
 # User-Agent
 RandNum = random.randint(1000, 9999)
@@ -48,54 +54,31 @@ ua = f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.33 (KHTML, like
 headers = {'User-Agent': ua}
 
 
-def get_latest_url():
-    global times
-    url = "https://www.minecraft.net/en-us/download/server/bedrock"
-    for i in range(times):
-        response = requests.get(url, headers=headers, timeout = 10)
+def get_serverZip_url(ver) -> str:
+    global max_retry, st, fn, dl_page_url, headers
+    for try_count in range(max_retry):
+        response = requests.get(dl_page_url, headers=headers, timeout = 10)
         if response.status_code == 200:
             break
-        print(f"Failed to get the latest version! (retry {i+1}/{times})")
+        print(f"Failed to get the latest version! (retry {try_count+1}/{max_retry})")
     else:
         raise RuntimeError("Failed to get the latest version! Please try again later.")
     print("response: ", response)
     content = str(response.text.encode('utf-8'))
-    urls = serch_url(content, '<a href="https://www.minecraft.net/bedrockdedicatedserver/', '.zip"')
-    out = select_version(urls)
-    return out
+    dl_pattern = re.escape(st + ver + "/") + r'(.*?)' + re.escape(fn)
+    serverZip_url = re.findall(dl_pattern, content)
+    serverZip_url = [st + m + fn for m in serverZip_url]
+    print("Detected URLs: ", serverZip_url)
+    return serverZip_url
 
 
-def serch_url(text, st, fn):
-    out, ans = [], ''
-
-    writing = False
-    for k, i in enumerate(text):
-        if i == st[0]: # start
-            if text[k:k+len(st)] == st:
-                writing = True
-        if i == fn[0]: # finish
-            if text[k:k+len(fn)] == fn:
-                writing = False
-                ans = (ans + fn).replace('<a href="', '').replace('"', '')
-                out.append(ans)
-                ans = ''
-        if writing: # writing
-            ans += i
-    return out
-
-
-def select_version(urls):
-    global ver
-    return urls[ver]
-
-
-def download_file(url):
-    global dl_path, times
-    for i in range(times):
+def download_serverZip(url) -> None:
+    global dl_path, max_retry
+    for i in range(max_retry):
         response = requests.get(url, headers=headers, timeout = 10)
         if response.status_code == 200:
             break
-        print(f"Failed to download! (retry {i+1}/{times})")
+        print(f"Failed to download! (retry {i+1}/{max_retry})")
     else:
         raise RuntimeError("Failed to download! Please try again later.")
     print("response: ", response)
@@ -105,17 +88,8 @@ def download_file(url):
         f.write(urlData)
 
 
-def unzip_file():
-    global dl_path
-    shutil.unpack_archive(dl_path, now_server_path)
-
-
-def rename_old_file():
-    os.rename(now_server_path, old_server_path)
-
-
-def backup_file():
-    # backup some files
+def backup_mcdata():
+    # backup minecraft server data
     # Folders: worlds
     # Files: allowlist.json, server.properties, permissions.json
     global old_server_path, backup_path
@@ -139,7 +113,7 @@ def backup_file():
     print("Backup Completed!")
 
 
-def copy_new_file():
+def restore_mcdata():
     global backup_path, now_server_path
     try:
         shutil.copytree(f'{backup_path}/worlds', f'{now_server_path}/worlds')
@@ -149,18 +123,14 @@ def copy_new_file():
     shutil.copy(f'{backup_path}/server.properties', f'{now_server_path}/server.properties')
 
 
-def is_now_server_exist(now_server_path):
-    return os.path.exists(now_server_path)
-
-
-def check_now_version():
-    # function to get version of now server
+def get_local_version():
+    # function to get version of local server
     global now_server_path
 
     files_list = os.listdir(f"{now_server_path}/behavior_packs")
     maxi = [0, 0, 0]
 
-    # behavior_packs内の最大バージョンを検索
+    # search maximum version in behavior_packs
     for i in files_list:
         if i[:8] != "vanilla_":
             continue
@@ -191,24 +161,25 @@ def get_os():
 
 def is_update_available(url):
     global now_server_path
-    now_version = check_now_version()
+    local_version = get_local_version()
     latest_version = ".".join(url.split("/")[-1][15:].replace(".zip", "").split(".")[0:3])
-    print("*\nnow_version: ", now_version)
+    print("*\nlocal_version: ", local_version)
     print("latest_version: ", latest_version)
-    return now_version != latest_version
+    return local_version != latest_version
 
 
 if __name__ == '__main__' and mode == 0:
     ver = get_os()
+    if not os.path.exists(now_server_path):
         print("-1")
         exit()
-    url = get_latest_url()
+    url = get_serverZip_url(ver)
     print("1" if is_update_available(url) else "0")
 
 
 if __name__ == '__main__' and mode == 1:
     if is_replace:
-        if not is_now_server_exist(now_server_path):
+        if not os.path.exists(now_server_path):
             print("Server not found! Please put the server in the same directory as this file.")
             print("If you want a new server, change variable 'is_place' to 'False'.")
             print("If you want to replace without any name changes, modify variable 'now_server_path' to appropriate value")
@@ -216,7 +187,7 @@ if __name__ == '__main__' and mode == 1:
         else:
             print("Server directory found!")
 
-    url = get_latest_url()
+    url = get_serverZip_url()
     print("URL detected!\n" + url)
 
     if is_replace:
@@ -234,25 +205,25 @@ if __name__ == '__main__' and mode == 1:
 
     print("*\nDownloading...")
     try:
-        download_file(url)
+        download_serverZip(url)
     except RuntimeError as e:
         print("Download failed! Please try again later.", e)
         exit()
     print("Downloaded!")
 
     if is_replace:
-        rename_old_file()
+        os.rename(now_server_path, old_server_path)
         print(f"Old Server Renamed! {now_server_path} -> {old_server_path}")
 
-        backup_file()
+        backup_mcdata()
         print("Game Data Backuped!")
 
     print("Unzipping downloaded file to directory...")
-    unzip_file()
+    shutil.unpack_archive(dl_path, now_server_path)
     print("Unzipped!")
 
     if is_replace:
-        copy_new_file()
+        restore_mcdata()
         print("Game Data Copied! (worlds & allowlist.json & server.properties)")
 
         shutil.rmtree(backup_path)
